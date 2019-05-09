@@ -2,8 +2,8 @@
 
 // Finding Best Top Left corner to Right Bottom corner...
 // Coding train inspired me to this.
-var rows = 5;
-var cols = 5;
+var rows = 50;
+var cols = 50;
 var grid = new Array(cols);
 
 var openSet = [];
@@ -12,13 +12,20 @@ var closedSet = [];
 var startPoint;
 var endPoint;
 var w, h;
+var path = [];
+var noResponse = false;
 
 function removeFromArray(arr, element) {
-    // for (var i = arr.length - 1; i >= 0; i++) {
-    //     if (arr[i] == element) {
-    //         arr.splice(i, 1)
-    //     }
-    // }
+    for (var i = arr.length - 1; i >= 0; i--) {
+        if (arr[i] == element) {
+            arr.splice(i, 1)
+        }
+    }
+}
+function heuristic(x, y) {
+    // var distance = dist(x.i, x.j, y.i, y.j)
+    var distance = abs(x.i - y.i) + abs(x.j - y.j)
+    return distance
 }
 
 // f,g and h values , f(n) = g(n) + h(n)
@@ -30,8 +37,16 @@ function Node(i, j) {
     this.g = 0;    // cost of the path from startPoint to n point which n is current my code
     this.h = 0;   //  heuristic function that estimates the cost of the cheapest path from n(current) to the goal(endPoint)
     this.neighbors = []
+    this.pre = null;
+    this.obs = false     // obstacle
+
+    if (random(1) < 0.2) {
+        this.obs = true;
+    }
+
     this.show = function (color) {
         fill(color);
+        if (this.obs) { fill(0) }
         noStroke();
         rect(this.i * w, this.j * h, w - 1, h - 1)
     }
@@ -58,7 +73,7 @@ function setup() {
     width = 400;
     height = 400;
     createCanvas(width, height);
-    console.log("A*")
+    console.log("A* Algorithm")
     w = width / cols;
     h = height / rows;
 
@@ -81,6 +96,8 @@ function setup() {
 
     startPoint = grid[0][0] // top-left corner
     endPoint = grid[cols - 1][rows - 1] // bottom-right corner
+    startPoint.obs = false;
+    endPoint.obs = false;
 
     openSet.push(startPoint);
 
@@ -101,7 +118,11 @@ function draw() {
         var current = openSet[winner];
 
         if (current == endPoint) {
-            console.log(winner)
+            noLoop()
+            console.log(winner + " Done!")
+            console.log(path)
+            console.log(path.length)
+
         }
 
         removeFromArray(openSet, current)  // remove from openSet 
@@ -110,23 +131,30 @@ function draw() {
         var neighbors = current.neighbors;
         for (var i = 0; i < neighbors.length; i++) {
             var neighbor = neighbors[i];
-            if (!closedSet.includes(neighbor)) {
+            if (!closedSet.includes(neighbor) && !neighbor.obs) {
                 var tempG = current.g + 1;
                 if (openSet.includes(neighbor)) {
                     if (tempG < neighbor.g) {
                         neighbor.g = tempG;
                     }
                     // it is not in openSet, then add to openSet
-                    else {
-                        neighbor.g = tempG;
-                        openSet.push(neighbor)
-                    }
                 }
+                else {
+                    neighbor.g = tempG;
+                    openSet.push(neighbor)
+                }
+                neighbor.h = heuristic(neighbor, endPoint)
+                neighbor.f = neighbor.g + neighbor.h  // f(n) = g(n) + h(n)
+                // console.log(neighbor.h)
+                neighbor.pre = current
             }
         }
         // keep going
     }
     else {
+        console.log("No EndPoint, No Response")
+        noResponse = true;
+        noLoop()
         // done
     }
     background(0);
@@ -143,7 +171,17 @@ function draw() {
     for (var i = 0; i < openSet.length; i++) {
         openSet[i].show(color(0, 0, 255))
     }
-
-
+    if (!noResponse) {
+        path = [];
+        var temp = current;
+        path.push(temp)
+        while (temp.pre) {
+            path.push(temp.pre)
+            temp = temp.pre;
+        }
+    }
+    for (var i = 0; i < path.length; i++) {
+        path[i].show(color(0, 255, 0))
+    }
 
 }
