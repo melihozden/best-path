@@ -4,7 +4,8 @@
 // Coding train inspired me to this.
 var rows = 50;
 var cols = 50;
-var grid = new Array(cols);
+
+var grid = new Array(cols)
 
 var openSet = [];
 var closedSet = [];
@@ -13,7 +14,8 @@ var startPoint;
 var endPoint;
 var w, h;
 var path = [];
-var noResponse = false;
+
+const total = document.getElementById("total")
 
 function removeFromArray(arr, element) {
     for (var i = arr.length - 1; i >= 0; i--) {
@@ -40,7 +42,7 @@ function Node(i, j) {
     this.pre = null;
     this.obs = false     // obstacle
 
-    if (random(1) < 0.2) {
+    if (random(1) < 0.3) {
         this.obs = true;
     }
 
@@ -54,6 +56,7 @@ function Node(i, j) {
         var i = this.i;
         var j = this.j;
         // 4 neighbors of current position
+
         if (i < cols - 1) {
             this.neighbors.push(grid[i + 1][j])
         }
@@ -65,6 +68,19 @@ function Node(i, j) {
         }
         if (j > 0) {
             this.neighbors.push(grid[i][j - 1])
+        }
+        // Diagonal neighbors
+        if (i > 0 && j > 0) {
+            this.neighbors.push(grid[i - 1][j - 1])
+        }
+        if (i < cols - 1 && j > 0) {
+            this.neighbors.push(grid[i + 1][j - 1])
+        }
+        if (i > 0 && j < rows - 1) {
+            this.neighbors.push(grid[i - 1][j + 1])
+        }
+        if (i < cols - 1 && j < rows - 1) {
+            this.neighbors.push(grid[i + 1][j + 1])
         }
     }
 }
@@ -101,8 +117,8 @@ function setup() {
 
     openSet.push(startPoint);
 
-    console.log(grid)
-    console.log(openSet)
+    //console.log(grid)
+    // console.log(openSet)
 
 }
 function draw() {
@@ -110,7 +126,7 @@ function draw() {
 
         var winner = 0;
         for (var i = 0; i < openSet.length; i++) {
-            if (openSet[i].f < openSet[winner]) {
+            if (openSet[i].f < openSet[winner].f) {
                 winner = i;
             }
         }
@@ -122,6 +138,7 @@ function draw() {
             console.log(winner + " Done!")
             console.log(path)
             console.log(path.length)
+            total.innerHTML += path.length
 
         }
 
@@ -137,8 +154,8 @@ function draw() {
                     if (tempG < neighbor.g) {
                         neighbor.g = tempG;
                     }
-                    // it is not in openSet, then add to openSet
                 }
+                // it is not in openSet, then add to openSet
                 else {
                     neighbor.g = tempG;
                     openSet.push(neighbor)
@@ -153,8 +170,9 @@ function draw() {
     }
     else {
         console.log("No EndPoint, No Response")
-        noResponse = true;
+        total.innerHTML = "No Response"
         noLoop()
+        return;
         // done
     }
     background(0);
@@ -171,14 +189,12 @@ function draw() {
     for (var i = 0; i < openSet.length; i++) {
         openSet[i].show(color(0, 0, 255))
     }
-    if (!noResponse) {
-        path = [];
-        var temp = current;
-        path.push(temp)
-        while (temp.pre) {
-            path.push(temp.pre)
-            temp = temp.pre;
-        }
+    path = [];
+    var temp = current;
+    path.push(temp)
+    while (temp.pre) {
+        path.push(temp.pre)
+        temp = temp.pre;
     }
     for (var i = 0; i < path.length; i++) {
         path[i].show(color(0, 255, 0))
