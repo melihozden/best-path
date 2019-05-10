@@ -5,5 +5,5 @@ https://www.geeksforgeeks.org/a-search-algorithm/
 
 ## Version 1 of A* algorithm
 <p align="center">
-  <img width="450" height="450" src="https://github.com/melihozden/best-path/master/astar_vs1.PNG">
+  <img width="450" height="450" src="astar_vs1.PNG">
 </p>
