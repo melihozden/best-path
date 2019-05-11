@@ -48,9 +48,11 @@ function Node(i, j) {
 
     this.show = function (color) {
         fill(color);
-        if (this.obs) { fill(0) }
-        noStroke();
-        rect(this.i * w, this.j * h, w - 1, h - 1)
+        if (this.obs) {
+            fill(0)
+            noStroke();
+            ellipse(this.i * w + w / 2, this.j * h + h / 2, w / 2, h / 2)
+        }
     }
     this.addNeighbors = function (grid) {
         var i = this.i;
@@ -175,7 +177,7 @@ function draw() {
         return;
         // done
     }
-    background(0);
+    background(255);
 
     for (var i = 0; i < cols; i++) {
         for (var j = 0; j < rows; j++) {
@@ -196,8 +198,14 @@ function draw() {
         path.push(temp.pre)
         temp = temp.pre;
     }
+    noFill()
+    stroke(0, 175, 0)
+    strokeWeight(w / 2)
+    beginShape()
     for (var i = 0; i < path.length; i++) {
-        path[i].show(color(0, 255, 0))
+        vertex(path[i].i * w + w / 2, path[i].j * h + h / 2)
     }
+    endShape()
+
 
 }
