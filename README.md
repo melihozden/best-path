@@ -7,7 +7,8 @@ https://www.geeksforgeeks.org/a-search-algorithm/
 <p align="center">
   <img width="450" height="450" src="astar_vs1.PNG">
 </p>
+
 ## Version 2 of A* algorithm
 <p align="center">
-  <img width="450" height="450" src="astar_vs2.PNG">
+  <img width="450" height="450" src="astar_vs2.png">
 </p>
